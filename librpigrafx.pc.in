@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE@
-Description: Graphics library for Raspberry Pi
+Description: Graphic library for Raspberry Pi
 Version: @VERSION@
-Cflags: -I ${includedir}
-Libs: -L ${libdir} -l rpigrafx
+Cflags: -I ${includedir} -I /opt/vc/include
+Libs: -L ${libdir} -L /opt/vc/lib -l rpigrafx -l bcm_host
