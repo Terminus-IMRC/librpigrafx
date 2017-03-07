@@ -106,6 +106,9 @@ static void get_frame_full()
 
 void local_rpigrafx_mmal_init()
 {
+    if (called.mmal != 0)
+        goto skip;
+
     {
         MMAL_COMPONENT_T *cp_camera_info = NULL;
         MMAL_PARAMETER_CAMERA_INFO_T camera_info;
@@ -135,10 +138,16 @@ void local_rpigrafx_mmal_init()
 
     frame_width  = frame_full_width;
     frame_height = frame_full_height;
+
+skip:
+    called.mmal ++;
 }
 
 void local_rpigrafx_mmal_finalize()
 {
+    if (called.mmal != 1)
+        goto skip;
+
     if (connection_camera_resize)
         _check(mmal_connection_destroy(connection_camera_resize));
     _check(mmal_wrapper_destroy(cpw_camera));
@@ -163,6 +172,9 @@ void local_rpigrafx_mmal_finalize()
     is_capture_ignited = 0;
     is_frame_full_ready = is_frame_ready = 0;
     is_no_resize = 1;
+
+skip:
+    called.mmal --;
 }
 
 
