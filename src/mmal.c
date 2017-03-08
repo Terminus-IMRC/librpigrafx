@@ -223,6 +223,8 @@ void rpigrafx_set_frame_size(const int width, const int height)
     config_resize_input(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
     config_resize_output(frame_encoding, frame_width, frame_height);
 
+    if (connection_camera_resize != NULL)
+        _check(mmal_connection_destroy(connection_camera_resize));
     _check(mmal_connection_create(
             &connection_camera_resize,
             cpw_camera->output[2], cpw_resize->input[0],
