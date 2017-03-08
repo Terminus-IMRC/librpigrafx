@@ -76,13 +76,11 @@ static void config_resize_output(const MMAL_FOURCC_T encoding, const int width, 
 static MMAL_BUFFER_HEADER_T* get_full_header(MMAL_PORT_T *port)
 {
     MMAL_BUFFER_HEADER_T *header = NULL;
-    _Bool eos = 0;
     for (; ; ) {
         while (mmal_wrapper_buffer_get_empty(port, &header, 0) == MMAL_SUCCESS)
             _check(mmal_port_send_buffer(port, header));
         _check(mmal_wrapper_buffer_get_full(port, &header, MMAL_WRAPPER_FLAG_WAIT));
-        eos = !!(header->flags & MMAL_BUFFER_HEADER_FLAG_EOS);
-        if (eos)
+        if (header->flags & (MMAL_BUFFER_HEADER_FLAG_EOS | MMAL_BUFFER_HEADER_FLAG_FRAME_END))
             break;
         mmal_buffer_header_release(header);
     }
