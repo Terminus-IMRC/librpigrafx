@@ -53,8 +53,6 @@ static void config_port(MMAL_PORT_T *port, const MMAL_FOURCC_T encoding, const i
     port->format->es->video.crop.y = 0;
     port->format->es->video.crop.width  = width;
     port->format->es->video.crop.height = height;
-    port->format->es->video.frame_rate.num = 0;
-    port->format->es->video.frame_rate.den = 1;
     _check(mmal_port_format_commit(port));
 }
 
