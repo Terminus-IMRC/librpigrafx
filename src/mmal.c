@@ -60,7 +60,7 @@ static void config_port(MMAL_PORT_T *port, const MMAL_FOURCC_T encoding, const i
 
 static void config_camera_output(const MMAL_FOURCC_T encoding, const int width, const int height)
 {
-    config_port(cpw_camera->output[0], encoding, width, height);
+    config_port(cpw_camera->output[2], encoding, width, height);
 }
 
 static void config_resize_input(const MMAL_FOURCC_T encoding, const int width, const int height)
