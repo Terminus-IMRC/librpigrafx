@@ -107,6 +107,8 @@ void local_rpigrafx_mmal_init()
     if (called.mmal != 0)
         goto skip;
 
+    bcm_host_init();
+
     {
         MMAL_COMPONENT_T *cp_camera_info = NULL;
         MMAL_PARAMETER_CAMERA_INFO_T camera_info;
@@ -165,6 +167,8 @@ void local_rpigrafx_mmal_finalize()
     is_capture_ignited = 0;
     is_frame_full_ready = is_frame_ready = 0;
     is_no_resize = 1;
+
+    bcm_host_deinit();
 
 skip:
     called.mmal --;
