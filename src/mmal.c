@@ -148,10 +148,10 @@ void local_rpigrafx_mmal_finalize()
     if (called.mmal != 1)
         goto skip;
 
-    if (connection_camera_resize)
+    if (connection_camera_resize != NULL)
         _check(mmal_connection_destroy(connection_camera_resize));
     _check(mmal_wrapper_destroy(cpw_camera));
-    if (cpw_resize)
+    if (cpw_resize != NULL)
         _check(mmal_wrapper_destroy(cpw_resize));
     connection_camera_resize = NULL;
     cpw_camera = NULL;
@@ -188,7 +188,7 @@ void rpigrafx_set_camera_num(const int camera_num)
 
     frame_full_width  = camera_info_cameras[camera_num].max_width;
     frame_full_height = camera_info_cameras[camera_num].max_height;
-    config_resize_input(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
+    rpigrafx_set_frame_size(frame_width, frame_height);
 }
 
 void rpigrafx_set_frame_format(const RPIGRAFX_FORMAT_T format)
@@ -221,10 +221,9 @@ void rpigrafx_set_frame_size(const int width, const int height)
 
     is_no_resize = 0;
 
-    if (cpw_resize == NULL) {
+    if (cpw_resize == NULL)
         _check(mmal_wrapper_create(&cpw_resize, "vc.ril.isp"));
-        config_resize_input(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
-    }
+    config_resize_input(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
     config_resize_output(frame_encoding, frame_width, frame_height);
 
     _check(mmal_connection_create(
