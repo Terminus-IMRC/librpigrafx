@@ -132,7 +132,8 @@ void local_rpigrafx_mmal_init()
 
     _check(mmal_wrapper_create(&cpw_camera, MMAL_COMPONENT_DEFAULT_CAMERA));
     config_camera_output(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
-    _check(mmal_wrapper_port_enable(cpw_camera->output[2], MMAL_WRAPPER_FLAG_PAYLOAD_ALLOCATE | MMAL_WRAPPER_FLAG_PAYLOAD_USE_SHARED_MEMORY));
+    //_check(mmal_wrapper_port_enable(cpw_camera->output[2], MMAL_WRAPPER_FLAG_PAYLOAD_ALLOCATE | MMAL_WRAPPER_FLAG_PAYLOAD_USE_SHARED_MEMORY));
+    _check(mmal_wrapper_port_enable(cpw_camera->output[2], MMAL_WRAPPER_FLAG_PAYLOAD_ALLOCATE));
 
     frame_width  = frame_full_width;
     frame_height = frame_full_height;
