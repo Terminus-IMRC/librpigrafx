@@ -20,8 +20,9 @@
 #include "local/error.h"
 
 
-static MMAL_WRAPPER_T *cpw_camera = NULL, *cpw_resize = NULL;
-static MMAL_CONNECTION_T *connection_camera_resize = NULL;
+static MMAL_WRAPPER_T *cpw_camera = NULL;
+static MMAL_WRAPPER_T *cpw_null = NULL, *cpw_resize = NULL;
+static MMAL_CONNECTION_T *connection_camera_resize = NULL, *connection_preview_null = NULL;
 
 static int num_cameras = 0;
 static MMAL_PARAMETER_CAMERA_INFO_CAMERA_T camera_info_cameras[MMAL_PARAMETER_CAMERA_INFO_MAX_CAMERAS];
@@ -130,6 +131,13 @@ void local_rpigrafx_mmal_init()
     frame_full_width = frame_full_height = 512;
 
     _check(mmal_wrapper_create(&cpw_camera, MMAL_COMPONENT_DEFAULT_CAMERA));
+    _check(mmal_wrapper_create(&cpw_null, "vc.null_sink"));
+    _check(mmal_connection_create(
+            &connection_preview_null,
+            cpw_camera->output[0], cpw_null->input[0],
+            MMAL_CONNECTION_FLAG_TUNNELLING | MMAL_CONNECTION_FLAG_ALLOCATION_ON_INPUT
+    ));
+    _check(mmal_connection_enable(connection_preview_null));
     config_camera_output(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
     //_check(mmal_wrapper_port_enable(cpw_camera->output[2], MMAL_WRAPPER_FLAG_PAYLOAD_ALLOCATE | MMAL_WRAPPER_FLAG_PAYLOAD_USE_SHARED_MEMORY));
     _check(mmal_wrapper_port_enable(cpw_camera->output[2], MMAL_WRAPPER_FLAG_PAYLOAD_ALLOCATE));
@@ -148,12 +156,20 @@ void local_rpigrafx_mmal_finalize()
 
     if (connection_camera_resize != NULL)
         _check(mmal_connection_destroy(connection_camera_resize));
-    _check(mmal_wrapper_destroy(cpw_camera));
+    if (connection_preview_null != NULL)
+        _check(mmal_connection_destroy(connection_preview_null));
+    connection_camera_resize = NULL;
+    connection_preview_null = NULL;
+
     if (cpw_resize != NULL)
         _check(mmal_wrapper_destroy(cpw_resize));
-    connection_camera_resize = NULL;
-    cpw_camera = NULL;
+    if (cpw_null != NULL)
+        _check(mmal_wrapper_destroy(cpw_null));
+    if (cpw_camera != NULL)
+        _check(mmal_wrapper_destroy(cpw_camera));
     cpw_resize = NULL;
+    cpw_null = NULL;
+    cpw_camera = NULL;
 
     num_cameras = 0;
 
