@@ -129,6 +129,7 @@ void local_rpigrafx_mmal_init()
 
         _check(mmal_component_destroy(cp_camera_info));
     }
+    frame_full_width = frame_full_height = 512;
 
     _check(mmal_wrapper_create(&cpw_camera, MMAL_COMPONENT_DEFAULT_CAMERA));
     config_camera_output(MMAL_ENCODING_RGBA, frame_full_width, frame_full_height);
