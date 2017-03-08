@@ -24,7 +24,7 @@ static MMAL_WRAPPER_T *cpw_camera = NULL, *cpw_resize = NULL;
 static MMAL_CONNECTION_T *connection_camera_resize = NULL;
 
 static int num_cameras = 0;
-static MMAL_PARAMETER_CAMERA_INFO_CAMERA_T *camera_info_cameras = NULL;
+static MMAL_PARAMETER_CAMERA_INFO_CAMERA_T camera_info_cameras[MMAL_PARAMETER_CAMERA_INFO_MAX_CAMERAS];
 
 static MMAL_BUFFER_HEADER_T *header_frame_full = NULL, *header_frame = NULL;
 static void *frame = NULL, *frame_full = NULL;
@@ -122,10 +122,7 @@ void local_rpigrafx_mmal_init()
         num_cameras = camera_info.num_cameras;
         if (num_cameras <= 0)
             error_and_exit("No cameras found: %d\n", num_cameras);
-        camera_info_cameras = malloc(sizeof(*camera_info_cameras) * num_cameras);
-        if (camera_info_cameras == NULL)
-            error_and_exit("Failed to malloc camera_info_cameras\n");
-        memcpy(camera_info_cameras, camera_info.cameras, sizeof(*camera_info_cameras) * num_cameras);
+        memcpy(camera_info_cameras, camera_info.cameras, sizeof(camera_info_cameras));
         /* Use camera 0 as default. */
         frame_full_width  = camera_info_cameras[0].max_width;
         frame_full_height = camera_info_cameras[0].max_height;
@@ -158,9 +155,6 @@ void local_rpigrafx_mmal_finalize()
     cpw_resize = NULL;
 
     num_cameras = 0;
-    /* It's OK to pass NULL to free(3). */
-    free(camera_info_cameras);
-    camera_info_cameras = NULL;
 
     frame_full_width = frame_full_height = frame_width = frame_height = 0;
     if (header_frame_full != NULL)
